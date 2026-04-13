@@ -12,7 +12,7 @@
     <div class="form-container">
         <h1 class="main-title">Отправка письма</h1>
         
-        <form action="/api/v1/" method="post" class="email-form">
+        <form action="/api/v1" method="post" class="email-form">
             
             <div class="field-group">
                 <input type="email" name="receiver_email" placeholder="example@mail.com" required>
@@ -30,8 +30,15 @@
                 <input type="datetime-local" name="sending_time" required>
             </div>
 
+            <input type="hidden" name="tz_info" id="tz_input" required>
+
+
             <button type="submit">Запланировать</button>
         </form>
     </div>
+    <script>
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.getElementById("tz_input").value = tz;
+    </script>
 </body>
 </html>

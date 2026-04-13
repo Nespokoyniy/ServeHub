@@ -6,4 +6,4 @@ class EmailSchema(BaseModel):
     receiver_email: EmailStr
     subject: str
     message_body: str
-    sending_time: datetime
+    sending_time: str

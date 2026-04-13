@@ -2,7 +2,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from backend.async_send_message import async_send_message
 import asyncio
-from backend.async_send_message import logger
+from backend.logger import logger
 
 
 async def main():

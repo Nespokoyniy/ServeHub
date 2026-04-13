@@ -5,16 +5,8 @@ import os
 from email.message import EmailMessage
 from datetime import datetime, timezone
 from sqlalchemy import text
-import logging
-import sys
+from backend.logger import logger
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
-
-logger = logging.getLogger(name="message_sender")
 
 dotenv.load_dotenv()
 
@@ -25,10 +17,10 @@ async def async_send_message():
         token = os.getenv("SMTP_PASSWORD")
         sender_email = os.getenv("SMTP_USER_NAME")
 
-        # query = text("""SELECT id, receiver_email, subject, message_body
-        #              FROM emails WHERE sending_time <= :now AND is_sent = False""")
-        query = text("""SELECT id, receiver_email, subject, message_body 
-                      FROM emails WHERE is_sent = False""")
+        query = text("""SELECT id, receiver_email, subject, message_body
+                     FROM emails WHERE sending_time <= :now AND is_sent = False""")
+        # query = text("""SELECT id, receiver_email, subject, message_body, sending_time
+        #               FROM emails WHERE is_sent = False""")
 
         current_time = datetime.now(timezone.utc)
 
@@ -41,6 +33,16 @@ async def async_send_message():
         if not emails_to_send:
             logger.info(f"There is no emails in the database")
             return
+
+        # for row in emails_to_send:
+        #     msg = EmailMessage()
+        #     msg.set_content(row.message_body)
+        #     msg["Subject"] = row.subject
+        #     msg["From"] = sender_email
+        #     msg["To"] = row.receiver_email
+
+        #     logger.info(f"DB Time: {row.sending_time} | Type: {type(row.sending_time)}")
+        #     logger.info(f"Now Time: {current_time} | Type: {type(current_time)}")
 
         try:
             async with aiosmtplib.SMTP(hostname="smtp.gmail.com", port=587) as server:
