@@ -12,13 +12,14 @@ from backend.schemas import EmailSchema
 from fastapi.logger import logger
 import logging
 
-gunicorn_logger = logging.getLogger("gunicorn.error")
-logger.handlers = gunicorn_logger.handlers
+logger = logging.getLogger("uvicorn.error")
 
-if __name__ != "main":
+gunicorn_logger = logging.getLogger("gunicorn.error")
+if gunicorn_logger.handlers:
+    logger.handlers = gunicorn_logger.handlers
     logger.setLevel(gunicorn_logger.level)
 else:
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
 
 app = FastAPI(redirect_slashes=True)
@@ -36,6 +37,10 @@ def redirect_to_main_page():
 @app.get("/email-scheduler", response_class=HTMLResponse)
 def get_form_page(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
+
+@app.get("/wrong-request", response_class=HTMLResponse)
+def get_form_page(request: Request):
+    return templates.TemplateResponse(request=request, name="wrong-request.html")
 
 
 @app.get("/message-scheduled", response_class=HTMLResponse)
@@ -65,13 +70,17 @@ async def handle_email_request(
     utc_dt = naive_dt.replace(tzinfo=ZoneInfo(tz_info)).astimezone(timezone.utc)
 
     logger.info(f"New utc time: {utc_dt}")
-
-    data = EmailSchema(
-        receiver_email=receiver_email,
-        subject=subject,
-        message_body=message_body,
-        sending_time=utc_dt,
-    )
+    
+    try:
+        data = EmailSchema(
+            receiver_email=receiver_email,
+            subject=subject,
+            message_body=message_body,
+            sending_time=utc_dt,
+        )
+        
+    except Exception:
+        return RedirectResponse(url="/wrong-request", status_code=303)
 
     query = text("""
     INSERT INTO emails (is_sent, receiver_email, subject, message_body, sending_time)

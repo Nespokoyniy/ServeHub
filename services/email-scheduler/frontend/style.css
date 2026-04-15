@@ -21,7 +21,7 @@ body {
     justify-content: center;
     padding: 20px;
 }
-/* Контейнер для всей формы, чтобы добавить эффект матового стекла */
+
 .form-container {
     background: var(--bg-glass);
     backdrop-filter: blur(12px);
@@ -51,13 +51,12 @@ body {
     gap: 18px;
 }
 
-/* Поля ввода */
 .email-form input,
 .email-form textarea {
     width: 100%;
     padding: 16px 25px;
-    border: 2px solid rgba(228, 86, 157, 0.3); /* Делаем границы тоньше и мягче */
-    border-radius: 20px; /* Уходим от слишком длинных "сосисок" к мягким углам */
+    border: 2px solid rgba(228, 86, 157, 0.3);
+    border-radius: 20px;
     background: rgba(0, 0, 0, 0.2);
     color: var(--text);
     font-size: 15px;
@@ -71,7 +70,6 @@ body {
     resize: none;
 }
 
-/* Красивый эффект при фокусе */
 .email-form input:focus,
 .email-form textarea:focus {
     border-color: var(--accent);
@@ -80,14 +78,12 @@ body {
     transform: translateY(-2px);
 }
 
-/* Плейсхолдеры */
 .email-form input::placeholder,
 .email-form textarea::placeholder {
     color: rgba(235, 235, 235, 0.4);
     font-size: 13px;
 }
 
-/* Кнопка с градиентом */
 .email-form button {
     margin-top: 10px;
     padding: 18px;
@@ -114,9 +110,8 @@ body {
     transform: scale(0.98);
 }
 
-/* Стилизация времени */
 input[type="time"]::-webkit-calendar-picker-indicator {
-    filter: invert(1); /* Делает иконку часов белой */
+    filter: invert(1);
     cursor: pointer;
 }
 
@@ -138,12 +133,27 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     line-height: 1;
     margin-bottom: 15px;
     filter: drop-shadow(0 0 20px var(--accent-glow));
-    animation: softGlow 2s ease-in-out infinite alternate;
+    color: #ff71bc;
 }
 
 @keyframes softGlow {
-    from { filter: drop-shadow(0 0 15px rgba(228, 86, 157, 0.4)); }
-    to { filter: drop-shadow(0 0 30px rgba(228, 86, 157, 0.8)); }
+    from {
+        filter: drop-shadow(0 0 15px rgba(228, 86, 157, 0.4));
+    }
+
+    to {
+        filter: drop-shadow(0 0 30px rgba(228, 86, 157, 0.8));
+    }
+}
+
+@keyframes softGlowError {
+    from {
+        filter: drop-shadow(0 0 15px rgba(255, 78, 80, 0.4));
+    }
+
+    to {
+        filter: drop-shadow(0 0 25px rgba(255, 78, 80, 0.65));
+    }
 }
 
 .success-title {
@@ -257,4 +267,63 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .time-info strong {
     color: var(--accent);
     font-weight: 600;
+}
+
+.wrong-request-container {
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    padding: 50px 40px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 550px;
+    text-align: center;
+}
+
+.wrong-request-icon {
+    font-size: 80px;
+    line-height: 1;
+    margin-bottom: 20px;
+    color: #ff4e50;
+    filter: drop-shadow(0 0 20px var(--accent-glow));
+}
+
+.wrong-request-title {
+    color: var(--text);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 15px rgba(255, 78, 80, 0.3);
+}
+
+.wrong-request-message {
+    color: rgba(235, 235, 235, 0.9);
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 35px;
+    background: rgba(255, 78, 80, 0.08);
+    border-radius: 30px;
+    padding: 25px;
+    border: 1px solid rgba(255, 78, 80, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+.wrong-request-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.wrong-request-actions .btn-primary {
+    background: linear-gradient(135deg, #ff4e50, #f857a6);
+    box-shadow: 0 10px 20px rgba(255, 78, 80, 0.3);
+}
+
+.wrong-request-actions .btn-primary:hover {
+    box-shadow: 0 15px 30px rgba(255, 78, 80, 0.5);
+    transform: scale(1.02);
 }
