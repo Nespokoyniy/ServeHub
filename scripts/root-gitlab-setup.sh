@@ -18,6 +18,13 @@ gitlab-rails runner "
     user.save!
 "
 
+echo "Настройки переменных..."
+curl --header "PRIVATE-TOKEN: $GITLAB_ROOT_TOKEN" \
+     --request POST "http://localhost/api/v4/projects/$PROJECT_ID/variables" \
+     --form "key=SSH_PRIVATE_KEY" \
+     --form "value=$MY_SECRET_KEY"
+
+
 echo "Настройки безопасности..."
 
 gitlab-rails runner "ApplicationSetting.last.update(signup_enabled: false)"

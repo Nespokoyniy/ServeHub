@@ -1,9 +1,70 @@
 stages:
+  - lint
   - test
+  - security
+  - build
+  - deploy
 
-check_runner:
-  stage: test
+services-yaml-lint:
+  stage: lint
+  image: python:3.13-alpine
   script:
-    - echo "Runner is working!"
-    - hostname
-    - date
+    - pip install yamllint
+    - yamllint project-builder/services.yaml
+
+security-scan:
+  stage: security
+  image:
+    name: aquasec/trivy:0.70.0
+    entrypoint: [""]
+  script:
+    - trivy fs --exit-code 1 --severity HIGH,CRITICAL .
+
+build-image:
+  stage: build
+  image: docker:29.4.0-alpine3.23
+  services:
+    - docker:29.4.0-dind-alpine3.23
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+#В самом проекте еще нужно дописать тесты
+test-email-scheduler:
+  stage: test
+  image: python:3.13-alpine
+  variables:
+    POETRY_VIRTUALENVS_IN_PROJECT: "true"
+  before_script:
+    - pip install poetry
+  script:
+    - cd services/email-scheduler
+    - poetry install
+    - poetry run pytest
+  cache:
+    key:
+      files: ["services/email-scheduler/poetry.lock"]
+    paths:
+      - services/email-scheduler/.venv
+
+#Дописать
+test-link-preview:
+  stage: test
+
+#Дописать
+test-shared-chat:
+  stage: test
+
+deploy-to-prod:
+  stage: deploy
+  image: alpine:3.22.4
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d "\r" | ssh-add -
+  script:
+    - scp -o ScriptHostKeyChecking=no project-builder/services.yaml $DEPLOY_USER@$DEPLOY_HOST:/opt/platform/
+    - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cd /opt/platform && ./project-builder/builder.py"
+  only:
+    - main

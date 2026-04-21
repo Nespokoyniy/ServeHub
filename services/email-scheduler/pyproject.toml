@@ -48,7 +48,8 @@ dependencies = [
     "vine (==5.1.0)",
     "wcwidth (==0.6.0)",
     "email-validator (>=2.3.0,<3.0.0)",
-    "apscheduler (>=3.11.2,<4.0.0)"
+    "apscheduler (>=3.11.2,<4.0.0)",
+    "pytest (>=9.0.3,<10.0.0)"
 ]
 
 [tool.poetry]
